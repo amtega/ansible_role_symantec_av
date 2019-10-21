@@ -1,2 +1,4 @@
 ---
 # Role default lower priority variables
+
+symantec_av_state: present
