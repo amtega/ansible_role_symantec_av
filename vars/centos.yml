@@ -1,0 +1,11 @@
+---
+
+symantec_av_archive: "SymantecEndpointProtection-rpm.zip"
+symantec_av_dependencies:
+  - unzip
+  - glibc.i686
+  - chkconfig
+
+symantec_av_kernel_dependencies:
+  - "kernel-devel-"
+  - "kernel-headers-"

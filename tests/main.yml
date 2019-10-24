@@ -23,32 +23,50 @@
   tags:
     - sandbox
 
-- name: Test ClamAV role
+- name: Test SymanteAV role
   hosts: vagrant_sandbox_vms
   roles:
-    
+    - role: amtega.packages
+      vars:
+        packages_os:
+          all:
+            all:
+              unzip: present
+
     - role: amtega.symantec_av
       vars:
-        clamav_freshclam_proxyserver: "hrz-proxy-0001"
-        clamav_freshclam_proxyport: "3128"
 
   tasks:
-    - name: "Check services state"
-      service_facts:
-      register: clamav_services_state
-
     - name: "Check status"
-      include_tasks: ../tasks/clamav_check_status.yml
+      command: "{{symantec_av_bin}}/sav info -p"
+      register: sav_output
 
-    - fail:
-        msg: "some ClamAV service is not running"
-      when: >
-        clamav_freshclam_state  != 'running'
-        or clamav_scan_state  != 'running'
-    - assert:
-        that:
-          - clamav_freshclam_state == 'running'
-          - clamav_scan_state  == 'running'
+    - name: "SAV status"
+      debug:
+        msg: "{{ sav_output.stdout_lines}}"
+
+    - name: "get service facts"
+      service_facts:
+
+    - name: "check services status"
+      debug:
+        msg: "service: {{ ansible_facts.services[item].name }} / status: {{ ansible_facts.services[item].state }}"
+      with_items:
+        - "{{ symantec_av_services }}"
+
+    - debug:
+        msg: "Symantec AV autoprotect status BAD"
+      when: not symante_av_autocompile_ok
+
+    # - fail:
+    #     msg: "some ClamAV service is not running"
+    #   when: >
+    #     clamav_freshclam_state  != 'running'
+    #     or clamav_scan_state  != 'running'
+    # - assert:
+    #     that:
+    #       - clamav_freshclam_state == 'running'
+    #       - clamav_scan_state  == 'running'
   tags:
     - idempotence
 

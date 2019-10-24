@@ -1,0 +1,9 @@
+---
+
+symantec_av_archive: "SymantecEndpointProtection-dpkg.zip"
+symantec_av_dependencies:
+  - unzip
+  - glibc.x86_64
+
+symantec_av_kernel_dependencies:
+  - "linux-headers-"

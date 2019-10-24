@@ -1,2 +1,12 @@
 ---
 # Role variables
+
+symantec_av_tmpdir: "/opt/sav"
+symantec_av_bin: "/opt/Symantec/symantec_antivirus"
+symantec_av_services:
+  - symcfgd
+  - rtvscand
+  - smcd
+  - autoprotect
+
+symante_av_autocompile_ok: true

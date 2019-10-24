@@ -1,0 +1,9 @@
+---
+
+- debug:
+    msg: "{{symantec_av_output.stdout }}"
+
+- name: "Check install output"
+  set_fact:
+    symantec_av_autocompile_ok: false
+  when: symantec_av_output.stdout.find('Build Auto-Protect kernel modules from source code failed with error') != -1

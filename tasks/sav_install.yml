@@ -1,0 +1,47 @@
+---
+
+- include_vars:
+    file: centos.yml
+  when: ansible_facts.distribution == "RedHat"
+    or ansible_facts.distribution == "CentOS"
+
+- include_vars:
+    file: fedora.yml
+  when: ansible_facts.distribution == "Fedora"
+
+- include_vars:
+    file: debian.yml
+  when: ansible_facts.distribution == "Ubuntu"
+
+- name: "install dependencies"
+  package:
+    name: "{{ item }}"
+  with_items:
+    - "{{ symantec_av_dependencies }}"
+
+- name: "create directory"
+  file:
+    path: "{{symantec_av_tmpdir}}"
+    state: directory
+
+- name: "upload packages"
+  unarchive:
+    copy: yes
+    src: "{{ symantec_av_archive }}"
+    dest: "{{ symantec_av_tmpdir }}"
+
+- name: "setting permissions"
+  file:
+    path: "{{ symantec_av_tmpdir }}/install.sh"
+    owner: root
+    group: root
+    mode: "0544"
+
+- name: "executing install script"
+  command: "{{symantec_av_tmpdir}}/install.sh -i"
+  register: symantec_av_output
+
+- include_tasks: sav_tests.yml
+#
+# - debug:
+#     msg: "{{symantec_av_output.stdout_lines }}"

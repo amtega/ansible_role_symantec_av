@@ -1,2 +1,11 @@
 ---
 # Role tasks
+
+- name: "Install Symantec AV"
+  include_tasks: sav_install.yml
+  when: symantec_av_state == "present"
+
+- name: "uninstall SymanteAV"
+  include_tasks: sav_uninstall.yml
+  when: symantec_av_state == "absent"
+  
