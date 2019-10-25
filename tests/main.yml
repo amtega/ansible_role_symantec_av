@@ -35,6 +35,9 @@
 
     - role: amtega.symantec_av
       vars:
+        symantec_av_state: "present"
+        #symantec_av_archive_rpm: "SEP_14.2.4815.1100_RPM.zip"
+        #symantec_av_archive_dpkg: "SEP_14.2.4815.1100_DPKG.zip"
 
   tasks:
     - name: "Check status"
@@ -45,18 +48,25 @@
       debug:
         msg: "{{ sav_output.stdout_lines}}"
 
-    - name: "get service facts"
-      service_facts:
+    # - name: "get service facts"
+    #   service_facts:
+    #
+    # - name: "check services status"
+    #   debug:
+    #     msg: "service: {{ ansible_facts.services[item].name }} / status: {{ ansible_facts.services[item].state }}"
+    #   with_items:
+    #     - "{{ symantec_av_services }}"
 
-    - name: "check services status"
-      debug:
-        msg: "service: {{ ansible_facts.services[item].name }} / status: {{ ansible_facts.services[item].state }}"
-      with_items:
-        - "{{ symantec_av_services }}"
+
 
     - debug:
         msg: "Symantec AV autoprotect status BAD"
-      when: not symante_av_autocompile_ok
+      when: not symantec_av_autocompile_ok
+
+    # - include_tasks: ../tasks/build_modules.yml
+    #   when: not symantec_av_autocompile_ok
+
+
 
     # - fail:
     #     msg: "some ClamAV service is not running"

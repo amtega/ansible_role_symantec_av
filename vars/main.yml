@@ -9,4 +9,11 @@ symantec_av_services:
   - smcd
   - autoprotect
 
-symante_av_autocompile_ok: true
+symantec_av_autocompile_ok: false
+
+symantec_av_module_dependencies:
+  - "kernel-devel"
+  - "kernel-headers"
+
+symantec_av_apmodule_ok_str: "Auto-Protect component installed successfully"
+symantec_av_apmodule_error_str: "Build Auto-Protect kernel modules from source code failed with error"

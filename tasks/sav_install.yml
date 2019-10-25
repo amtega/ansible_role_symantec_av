@@ -12,31 +12,46 @@
 - include_vars:
     file: debian.yml
   when: ansible_facts.distribution == "Ubuntu"
-
+##
 - name: "install dependencies"
   package:
     name: "{{ item }}"
   with_items:
     - "{{ symantec_av_dependencies }}"
-
+##
 - name: "create directory"
   file:
     path: "{{symantec_av_tmpdir}}"
     state: directory
+#
+- name: "upload packages"
+  unarchive:
+    copy: yes
+    src: "{{ symantec_av_archive_rpm }}"
+    dest: "{{ symantec_av_tmpdir }}"
+  when: symantec_av_package_type == 'rpm'
 
 - name: "upload packages"
   unarchive:
     copy: yes
-    src: "{{ symantec_av_archive }}"
+    src: "{{ symantec_av_archive_dpkg }}"
     dest: "{{ symantec_av_tmpdir }}"
+  when: symantec_av_package_type == 'dpkg'
 
+- name: "install modules dependencies"
+  package:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - "{{symantec_av_module_dependencies}}"
+#
 - name: "setting permissions"
   file:
     path: "{{ symantec_av_tmpdir }}/install.sh"
     owner: root
     group: root
     mode: "0544"
-
+##
 - name: "executing install script"
   command: "{{symantec_av_tmpdir}}/install.sh -i"
   register: symantec_av_output

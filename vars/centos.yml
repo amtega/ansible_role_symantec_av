@@ -1,6 +1,5 @@
 ---
 
-symantec_av_archive: "SymantecEndpointProtection-rpm.zip"
 symantec_av_dependencies:
   - unzip
   - glibc.i686
@@ -9,3 +8,6 @@ symantec_av_dependencies:
 symantec_av_kernel_dependencies:
   - "kernel-devel-"
   - "kernel-headers-"
+
+# what version of file to install
+symantec_av_package_type: 'rpm'
