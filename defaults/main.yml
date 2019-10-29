@@ -3,5 +3,6 @@
 
 symantec_av_state: "present" # values are: present | absent
 
+symantec_av_version: "14.2"
 symantec_av_archive_rpm: "SymantecEndpointProtection-rpm.zip"
 symantec_av_archive_dpkg: "SymantecEndpointProtection-dpkg.zip"

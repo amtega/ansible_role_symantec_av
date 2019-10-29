@@ -48,20 +48,29 @@
       debug:
         msg: "{{ sav_output.stdout_lines}}"
 
-    # - name: "get service facts"
-    #   service_facts:
-    #
-    # - name: "check services status"
-    #   debug:
-    #     msg: "service: {{ ansible_facts.services[item].name }} / status: {{ ansible_facts.services[item].state }}"
-    #   with_items:
-    #     - "{{ symantec_av_services }}"
+    - set_fact:
+        symantec_av_version_installed: "{{ sav_output.stdout_lines[0].split(' ')[0] }}"
 
+    # - debug:
+    #     msg: "version installed {{ symantec_av_version_installed }}"
 
+    - assert:
+        that:
+          - symantec_av_version_installed == symantec_av_version
 
-    - debug:
-        msg: "Symantec AV autoprotect status BAD"
-      when: not symantec_av_autocompile_ok
+    - name: "get service facts"
+      service_facts:
+
+    - name: "check services status"
+      debug:
+        msg: "service: {{ ansible_facts.services[item].name }} / status: {{ ansible_facts.services[item].state }}"
+      with_items:
+        - "{{ symantec_av_services }}"
+
+    - assert:
+        that:
+          - ansible_facts.services[symantec_av_services[0]].state == 'running'
+          - ansible_facts.services[symantec_av_services[1]].state == 'running'
 
     # - include_tasks: ../tasks/build_modules.yml
     #   when: not symantec_av_autocompile_ok
