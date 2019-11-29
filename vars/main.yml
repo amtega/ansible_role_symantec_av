@@ -7,13 +7,17 @@ symantec_av_services:
   - symcfgd
   - rtvscand
   - smcd
-  - autoprotect
-
-symantec_av_autocompile_ok: false
 
 symantec_av_module_dependencies:
   - "kernel-devel"
   - "kernel-headers"
 
-symantec_av_apmodule_ok_str: "Auto-Protect component installed successfully"
-symantec_av_apmodule_error_str: "Build Auto-Protect kernel modules from source code failed with error"
+symantec_av_version_installed: ''
+
+symantec_av_origin: files # artifacts
+
+symantec_av_autocompile_ok: false
+
+symantec_av_needs_install: false
+
+symantec_av_version_installed_string: ''

@@ -1,8 +1,16 @@
 ---
 # Role default lower priority variables
 
+# whether to install or remove Symantec AV
 symantec_av_state: "present" # values are: present | absent
 
+# Information about the deployment archives
 symantec_av_version: "14.2"
-symantec_av_archive_rpm: "SymantecEndpointProtection-rpm.zip"
-symantec_av_archive_dpkg: "SymantecEndpointProtection-dpkg.zip"
+symantec_av_version_string: "(14.2.4815.1100)"
+symantec_av_archive_rpm: "SEP_14.2.4815.1100_RPM.zip"
+symantec_av_archive_dpkg: "SEP_14.2.4815.1100_DPKG.zip"
+
+# symantec_av_version: "14.2"
+# symantec_av_version_string: "(14.2.758.0000)"
+# symantec_av_archive_rpm: "SymantecEndpointProtection-rpm.zip"
+# symantec_av_archive_dpkg: "SymantecEndpointProtection-dpkg.zip"

@@ -1,0 +1,61 @@
+---
+# Tasks for testing role
+
+- name: Configure vagrant sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.vagrant_presets
+      vagrant_presets_boxes_json_query: >-
+        [? starts_with(name, `centos-6`)
+           || starts_with(name, `centos-7`)
+           || starts_with(name, `fedora-28`)
+           || starts_with(name, `fedora-29`)
+           || starts_with(name, `fedora-30`) ]
+
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.vagrant_sandbox
+      vagrant_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Test SymantecAV role
+  hosts: vagrant_sandbox_vms
+  roles:
+    - role: amtega.symantec_av
+      vars:
+        symantec_av_state: "absent"
+
+  tasks:
+    - name: "Check status"
+      include_tasks: ../tasks/sav_version.yml
+
+    - assert:
+        that:
+          - symantec_av_version_installed == ''
+
+    - name: "get service facts"
+      service_facts:
+
+    # - assert:
+    #     that:
+    #       - ansible_facts.services[item].state == 'running'
+    #     success_msg: "checked service {{item}}"
+    #   with_items:
+    #       - "{{ symantec_av_services }}"
+
+  tags:
+    - idempotence
+
+- name: Cleanup vagrant sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.vagrant_sandbox
+      vagrant_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox
