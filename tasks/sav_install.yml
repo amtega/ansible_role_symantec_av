@@ -1,0 +1,131 @@
+---
+
+- include_vars:
+    file: centos.yml
+  when: ansible_facts.distribution == "RedHat"
+    or ansible_facts.distribution == "CentOS"
+
+- include_vars:
+    file: fedora.yml
+  when: ansible_facts.distribution == "Fedora"
+
+- include_vars:
+    file: debian.yml
+  when: ansible_facts.distribution == "Ubuntu"
+##
+- name: "install dependencies"
+  package:
+    name: "{{ item }}"
+  with_items:
+    - "{{ symantec_av_dependencies }}"
+##
+- name: "create directory"
+  file:
+    path: "{{symantec_av_tmpdir}}"
+    state: directory
+
+- name: "upload rpm packages"
+  unarchive:
+    copy: yes
+    src: "{{ symantec_av_archive_rpm }}"
+    dest: "{{ symantec_av_tmpdir }}"
+  when: symantec_av_package_type == 'rpm'
+    and symantec_av_origin == 'files'
+
+- name: "upload dpkg packages"
+  unarchive:
+    copy: yes
+    src: "{{ symantec_av_archive_dpkg }}"
+    dest: "{{ symantec_av_tmpdir }}"
+  when: symantec_av_package_type == 'dpkg'
+    and symantec_av_origin == 'files'
+
+- name: download - get SymantecAV artifact for rpm
+  include_role:
+    name: amtega.artifact
+  vars:
+    artifact_list:
+      - id: symantec_artifact
+        type: gitlab
+        host: https://gitlab-sistemas.xunta.local
+        path: symantec
+        dest: "{{ symantec_av_tmpdir }}"
+        unarchive: yes
+        unarchive_creates: "{{ symantec_av_tmpdir }}/symantec"
+        owner: root
+        group: root
+        state: present
+        version: "{{ symantec_av_version }}"
+        project: ansible/dml
+        branch: master
+        file: "{{ symantec_av_archive_rpm }}"
+        password: "{{ ANSIBLE_GITLAB_TOKEN | string }}"
+        username: "{{ ANSIBLE_USER }}"
+        validate_certs: no
+        # !!!! FIXME
+        no_log: no
+  when: symantec_av_package_type == 'rpm'
+        and symantec_av_origin == 'artifacts'
+
+- name: download - get SymantecAV artifact for dpkg
+  include_role:
+    name: amtega.artifact
+  vars:
+    artifact_list:
+      - id: symantec_artifact
+        type: gitlab
+        host: https://gitlab-sistemas.xunta.local
+        path: symantec
+        dest: "{{ symantec_av_tmpdir }}"
+        unarchive: yes
+        unarchive_creates: "{{ symantec_av_tmpdir }}/symantec"
+        owner: root
+        group: root
+        state: present
+        version: "{{ symantec_av_version }}"
+        project: cchefer/ansible__dml
+        branch: master
+        file: "{{ symantec_av_archive_dpkg }}"
+        password: "{{ ANSIBLE_GITLAB_TOKEN | string }}"
+        username: "{{ ANSIBLE_USER }}"
+        validate_certs: no
+        # !!!! FIXME
+        no_log: no
+  when: symantec_av_package_type == 'dpkg'
+        and symantec_av_origin == 'artifacts'
+
+# - name: "install modules dependencies"
+#   package:
+#     name: "{{item}}"
+#     state: present
+#   with_items:
+#     - "{{symantec_av_module_dependencies}}"
+#
+- name: "setting permissions"
+  file:
+    path: "{{ symantec_av_tmpdir }}/install.sh"
+    owner: root
+    group: root
+    mode: "0544"
+##
+- name: "executing install script"
+  command: "{{symantec_av_tmpdir}}/install.sh -i"
+  register: symantec_av_output
+
+- debug:
+    msg: "install.sh output:: {{symantec_av_output.stdout_lines }}"
+    verbosity: 2
+
+- name: "check SymanteAV services"
+  block:
+    - name: "get service facts"
+      service_facts:
+
+    - assert:
+        that:
+          - ansible_facts.services[item].state == 'running'
+        success_msg: "checked service {{item}}"
+      with_items:
+          - "{{ symantec_av_services }}"
+  tags:
+    - role::symantec_av::check-services

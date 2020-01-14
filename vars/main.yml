@@ -1,2 +1,23 @@
 ---
 # Role variables
+
+symantec_av_tmpdir: "/opt/sav"
+symantec_av_bin: "/opt/Symantec/symantec_antivirus"
+symantec_av_services:
+  - symcfgd
+  - rtvscand
+  - smcd
+
+symantec_av_module_dependencies:
+  - "kernel-devel"
+  - "kernel-headers"
+
+symantec_av_version_installed: ''
+
+symantec_av_origin: files # artifacts
+
+symantec_av_autocompile_ok: false
+
+symantec_av_needs_install: false
+
+symantec_av_version_installed_string: ''

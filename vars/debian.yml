@@ -1,0 +1,11 @@
+---
+
+symantec_av_dependencies:
+  - unzip
+  - glibc.x86_64
+
+symantec_av_kernel_dependencies:
+  - "linux-headers-"
+  - "linux-devel-"
+
+symantec_av_package_type: "dpkg"

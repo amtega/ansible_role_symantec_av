@@ -1,0 +1,64 @@
+---
+- name: "check verson playbook"
+  block:
+
+  - name: "check if SymantecAV CLI is installed"
+    stat:
+      path: "{{symantec_av_bin}}/sav"
+    register: symantec_av_cmd
+
+  - name: "check SymantecAV info"
+    block:
+      - name: "Check status"
+        command: "{{symantec_av_bin}}/sav info -p"
+        register: sav_output
+        failed_when: false
+
+      - name: "check status output is:"
+        debug:
+          msg: "{{ sav_output }}"
+          verbosity: 1
+
+    when: symantec_av_cmd.stat.exists
+
+  - set_fact:
+      _symantec_av_version_installed: ''
+      _symantec_av_version_build: ''
+
+  - set_fact:
+      _symantec_av_version_installed: "{{ sav_output.stdout_lines[0].split(' ')[0] | default ('') }}"
+      _symantec_av_version_build: "{{ sav_output.stdout_lines[0].split(' ')[2] | default ('') }}"
+    when: sav_output.stdout_lines is defined
+
+  - set_fact:
+      #symantec_av_version_installed_string: "{{_symantec_av_version_installed}} build {{_symantec_av_version_build}}"
+      symantec_av_version_installed_string: "{{sav_output.stdout_lines[0].split(' ') | last | default('')}}"
+    when: sav_output.stdout_lines is defined
+
+  - debug:
+      var: symantec_av_version
+      verbosity: 1
+    vars:
+        symantec_av_version:
+          version_installed: "{{_symantec_av_version_installed}}"
+          version_build: "{{_symantec_av_version_build}}"
+          version_string: "{{symantec_av_version_installed_string}}"
+
+  - debug:
+      msg: "symantec_av_versions:  {{symantec_av_versions}}"
+    vars:
+      symantec_av_versions:
+        version_installed: "{{symantec_av_version_installed_string}}"
+        version_required: "{{symantec_av_version_string}}"
+      verbosity: 1
+
+  - set_fact:
+      symantec_av_needs_install: true
+    when: symantec_av_version_installed_string != symantec_av_version_string
+
+  - debug:
+      msg: "symantec_av_needs_install: {{symantec_av_needs_install}}"
+      verbosity: 1
+
+  tags:
+    - role::symantec_av::version

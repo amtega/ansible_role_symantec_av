@@ -1,0 +1,21 @@
+---
+all:
+  children:
+    stg-specloud-0001:
+      hosts:
+        stg-specloud-0001-mgmt-001:
+            symantec_av_origin: 'files'
+            symantec_av_state: "present"
+            symantec_av_version: "(14.2 build 4815)"
+            symantec_av_archive_rpm: "SEP_14.2.4815.1100_RPM.zip"
+            symantec_av_archive_dpkg: "SEP_14.2.4815.1100_DPKG.zip"
+
+
+  hosts:
+      #srv-lamp4-prep:
+
+    #dev-samba-0001:
+    #dev-php-c06-0001:
+    #dev-php-c06-0002:
+    #dev-samba-0002:
+    #stg-tomcat-c06-0002:

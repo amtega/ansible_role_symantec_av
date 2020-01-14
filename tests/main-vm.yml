@@ -1,0 +1,63 @@
+---
+- hosts: all
+  roles:
+    - role: amtega.packages
+      vars:
+        packages_os:
+          all:
+            all:
+              unzip: present
+          centos:
+            all:
+              glibc.i686: present
+              chkconfig: present
+          fedora:
+            all:
+              glibc.i686: present
+              libnsl.i686: present
+              chkconfig: present
+          redhat:
+            all:
+              glibc.i686: present
+              chkconfig: present
+
+    - role: amtega.symantec_av
+      vars:
+        # symantec_av_origin: 'files'
+        # symantec_av_state: "present"
+        # symantec_av_version: "(14.2 build 4815)"
+        # symantec_av_archive_rpm: "SEP_14.2.4815.1100_RPM.zip"
+        # symantec_av_archive_dpkg: "SEP_14.2.4815.1100_DPKG.zip"
+
+
+  tasks:
+
+#    - name: isntall SymantecAV
+
+    - name: "Check status"
+      command: "{{symantec_av_bin}}/sav info -p"
+      register: sav_output
+
+    # - name: "SAV status"
+    #   debug:
+    #     msg: " SAV status: {{ sav_output.stdout_lines}}"
+    #     verbosity: 2
+    #
+    # - set_fact:
+    #     symantec_av_version_installed: "{{ sav_output.stdout_lines[0].split(' ')[0] }}"
+    #
+    # - debug:
+    #     msg: "version installed {{ symantec_av_version_installed }}"
+    #     verbosity: 2
+
+    - name: "check version"
+      include_role:
+        name: amtega.symantec_av
+      tags: role::symantec_av::version
+
+    - assert:
+        that:
+          - symantec_av_version_installed_string == symantec_av_version_string
+        success_msg: "{{symantec_av_version_installed_string}} version installed"
+        fail_msg: >-
+          "symantec_av_version_installed: {{symantec_av_version_installed_string}} symantec_av_version: {{symantec_av_version_string}}"

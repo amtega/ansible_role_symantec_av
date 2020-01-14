@@ -1,0 +1,17 @@
+---
+- name: "SymantecAV service status"
+  service_facts:
+  tags:
+    - role::symantec_av::check_services
+
+# - name: "service status"
+- debug:
+    msg: "{{symantec_av_service}}"
+  vars:
+    symantec_av_service:
+      name: "{{ item }}"
+      state: "{{ ansible_facts.services[item].state | ternary('running','status running', 'not found') | default ('') }}"
+  with_items:
+    - "{{ symantec_av_services }}"
+  tags:
+    - role::symantec_av::check_services

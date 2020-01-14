@@ -1,0 +1,14 @@
+---
+
+- name: "check uninstall script"
+  stat:
+    path: "{{ symantec_av_tmpdir }}/install.sh"
+  register: symantec_av_stat
+
+- debug:
+    msg: "{{symantec_av_stat.stat.exists}}"
+
+- name: "executing uninstall script"
+  command: "{{ symantec_av_tmpdir }}/install.sh -u"
+  register: symantec_av_output
+  when: symantec_av_stat.stat.exists
