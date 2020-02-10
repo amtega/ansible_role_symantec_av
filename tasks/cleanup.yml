@@ -1,0 +1,11 @@
+---
+# Role cleanup tasks
+
+- name: Remove temporary directory for SymantecAV artifact
+  file:
+    path: "{{ symantec_av_tmp_dir_result.path }}"
+    state: absent
+  tags:
+    - role::symantec_av
+    - role::symantec_av::install
+    - role::symantec_av::uninstall

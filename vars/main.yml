@@ -1,0 +1,5 @@
+---
+# Role variables
+
+symantec_base_dir: /opt/Symantec
+symantec_av_bin: "{{ symantec_base_dir }}/symantec_antivirus"

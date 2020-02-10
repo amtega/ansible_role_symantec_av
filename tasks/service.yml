@@ -1,0 +1,19 @@
+---
+# Role service tasks
+
+- name: Setup SymantecAV services
+  service:
+    name: "{{ symantec_av_service }}"
+    state: >-
+      {{ (symantec_av_state == "present")
+         | ternary("started", "stopped") }}
+    enabled: "{{ symantec_av_state == 'present' }}"
+  loop:
+    - symcfgd
+    - rtvscand
+    - smcd
+  loop_control:
+    loop_var: symantec_av_service
+  tags:
+    - role::symantec_av
+    - role::symantec_av::service

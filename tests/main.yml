@@ -1,0 +1,39 @@
+---
+# Tasks for testing role
+
+- name: Configure vagrant sandbox environment
+  hosts: localhost
+  roles:
+    # CentOS tests doesn't work on virtual machines. The virtual machine launchs
+    # kernel panic. Seems something specific to Virtual Box
+    - role: amtega.vagrant_presets
+      vagrant_presets_boxes_json_query: >-
+        [? starts_with(name, `centos-7`)
+           || starts_with(name, `fedora-29`)
+           || starts_with(name, `fedora-30`) ]
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.vagrant_sandbox
+      vars:
+        vagrant_sandbox_state: started
+        vagrant_provisioner_vm_memory: 1024
+  tags:
+    - sandbox
+
+- name: Test symantec_av role
+  hosts: vagrant_sandbox_vms
+  roles:
+    - role: amtega.symantec_av
+
+- name: Cleanup vagrant sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.vagrant_sandbox
+      vagrant_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox

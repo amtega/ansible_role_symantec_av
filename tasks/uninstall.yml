@@ -1,0 +1,14 @@
+---
+# Role uninstall tasks
+
+- block:
+    - include_tasks: download.yml
+
+    - name: Run uninstall script
+      command: "{{ symantec_av_artifact.dest }}/install.sh -u"
+      register: symantec_av_uninstall_result
+
+    - include_tasks: cleanup.yml
+  tags:
+    - role::symantec_av
+    - role::symantec_av::uninstall

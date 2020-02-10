@@ -1,0 +1,45 @@
+---
+# Role dependencies
+
+galaxy_info:
+  role_name: symantec_av
+  author: Carlos Chedas Fernández / Juan Antonio Valiño García
+  description: Setup SymantecAV antivirus
+  company: AMTEGA - Xunta de Galicia
+  license: GPLv3 or EUPL
+  min_ansible_version: 2.8
+  platforms:
+    - name: EL
+      versions:
+        - 7
+    - name: Fedora
+      versions:
+        - 29
+        - 30
+  galaxy_tags:
+    - antivirus
+    - security
+
+dependencies:
+  - role: amtega.check_platform
+    vars:
+      check_platform_distributions:
+        centos: 7
+        fedora: 29
+        rhel: 7
+    tags:
+      - role::sshd
+
+  - role: amtega.packages
+    vars:
+      packages_os:
+        all:
+          all:
+            unzip: present
+            glibc.i686: present
+            chkconfig: present
+            kernel-devel: present
+            kernel-headers: present
+        fedora:
+          all:
+            libnsl.i686: present

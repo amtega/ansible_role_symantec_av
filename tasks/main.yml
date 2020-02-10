@@ -1,0 +1,31 @@
+---
+# Role tasks
+
+- name: Check SymantecAV version
+  include_tasks: version.yml
+  tags:
+    - role::symantec_av
+
+- name: Install SymantecAV
+  include_tasks: install.yml
+  when:
+    - symantec_av_state == "present"
+    - >-
+      not symantec_av_installed_version | string
+      is version(symantec_av_version | string, "==")
+  tags:
+    - role::symantec_av
+    - role::symantec_av::install
+
+- name: Uninstall SymantecAV
+  include_tasks: uninstall.yml
+  when: symantec_av_state == "absent"
+  tags:
+    - role::symantec_av
+    - role::symantec_av::uninstall
+
+- name: Setup SymantecAV services
+  include_tasks: service.yml
+  tags:
+    - role::symantec_av
+    - role::symantec_av::service

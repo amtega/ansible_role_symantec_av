@@ -1,0 +1,26 @@
+---
+# Role install tasks
+
+- block:
+    - include_tasks: download.yml
+
+    - name: Setup install script permissions
+      file:
+        path: "{{ symantec_av_tmp_dir_result.path }}/install.sh"
+        owner: root
+        group: root
+        mode: "0544"
+
+    - name: Run install script
+      command: "{{ symantec_av_tmp_dir_result.path }}/install.sh -i "
+      register: symantec_av_install_result
+
+    - name: Remove temporary directory for SymantecAV artifact
+      file:
+        path: "{{ symantec_av_tmp_dir_result.path }}"
+        state: absent
+
+    - include_tasks: cleanup.yml
+  tags:
+    - role::symantec_av
+    - role::symantec_av::install

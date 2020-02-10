@@ -1,0 +1,25 @@
+---
+# Check version tasks
+
+- block:
+    - name: Check SymantecAV CLI
+      stat:
+        path: "{{ symantec_av_bin }}/sav"
+      register: symantec_av_check_install_result
+
+    - name: Gather SymantecAV info
+      command: "{{ symantec_av_bin }}/sav info -p"
+      when: symantec_av_check_install_result.stat.exists
+      changed_when: no
+      register: symantec_av_info_result
+
+    - name: Setup facts with installed SymantecAV version info
+      set_fact:
+        symantec_av_installed_version: >-
+          {{ (symantec_av_info_result.stdout_lines
+              | default(["0"])).0.split(" ")
+             | last
+             | regex_replace("\(", "")
+             | regex_replace("\)", "") }}
+  tags:
+    - role::symantec_av

@@ -1,0 +1,32 @@
+---
+# Role default lower priority variables
+
+# Symantec AV state. Can be preset or absent
+
+symantec_av_state: present
+
+# Version that is contained in the artifact detailed below in the variable
+# symantec_av_artifact.
+
+#symantec_av_version:
+
+# Install Artifact
+#
+# Point `symantec_av_artifact` to a repository that contains the install
+# artifact.
+#
+# Take a look to `amtega.artifact` role documentation to known about supported
+# types of artifacts, their specific settings and how to configure a proxy if
+# necessary
+#
+# The artifact attributes dest, version, unarchive, unarchive_creates and
+# unarchive_remove will be ignored
+
+symantec_av_artifact:
+  type: https
+  host: http://myserver.org
+  path: sav
+  file: sav.zip
+  timeout: 120
+  validate_certs: no
+  no_log: no
