@@ -4,11 +4,22 @@
 - block:
     - include_tasks: download.yml
 
+    - name: Setup uninstall script permissions
+      file:
+        path: "{{ symantec_av_uninstall_script_path }}"
+        owner: root
+        group: root
+        mode: "0544"
+
     - name: Run uninstall script
-      command: "{{ symantec_av_artifact.dest }}/install.sh -u"
+      command: "{{ symantec_av_uninstall_script_path }} -u"
       register: symantec_av_uninstall_result
 
     - include_tasks: cleanup.yml
+  vars:
+    symantec_av_uninstall_script_path: >-
+      {{ symantec_av_artifact.dest
+         | default(symantec_av_tmp_dir_result.path) }}/install.sh
   tags:
     - role::symantec_av
     - role::symantec_av::uninstall

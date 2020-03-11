@@ -1,6 +1,11 @@
 ---
 # Role service tasks
 
+- debug: msg="{{ symantec_av_state == 'absent' }}"
+  tags:
+    - role::symantec_av
+    - role::symantec_av::service
+
 - name: Setup SymantecAV services
   service:
     name: "{{ symantec_av_service }}"
@@ -8,6 +13,8 @@
       {{ (symantec_av_state == "present")
          | ternary("started", "stopped") }}
     enabled: "{{ symantec_av_state == 'present' }}"
+  ignore_errors: >-
+    {{ (symantec_av_state == "absent") | ternary("yes", "no") }}
   loop:
     - symcfgd
     - rtvscand

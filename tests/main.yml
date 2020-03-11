@@ -4,8 +4,6 @@
 - name: Configure vagrant sandbox environment
   hosts: localhost
   roles:
-    # CentOS tests doesn't work on virtual machines. The virtual machine launchs
-    # kernel panic. Seems something specific to Virtual Box
     - role: amtega.vagrant_presets
       vagrant_presets_boxes_json_query: >-
         [? starts_with(name, `centos-7`)
