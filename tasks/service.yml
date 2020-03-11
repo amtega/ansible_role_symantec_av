@@ -1,11 +1,6 @@
 ---
 # Role service tasks
 
-- debug: msg="{{ symantec_av_state == 'absent' }}"
-  tags:
-    - role::symantec_av
-    - role::symantec_av::service
-
 - name: Setup SymantecAV services
   service:
     name: "{{ symantec_av_service }}"
