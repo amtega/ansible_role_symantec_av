@@ -1,7 +1,7 @@
 ---
 # Tasks for testing role
 
-- name: Configure vagrant sandbox environment
+- name: Configure sandbox environment
   hosts: localhost
   roles:
     - role: amtega.vagrant_presets
@@ -12,7 +12,7 @@
   tags:
     - sandbox
 
-- name: Run idempotence test
+- name: Setup testing sandbox
   hosts: localhost
   roles:
     - role: amtega.vagrant_sandbox
@@ -27,7 +27,7 @@
   roles:
     - role: amtega.symantec_av
 
-- name: Cleanup vagrant sandbox
+- name: Cleanup testing sandbox
   hosts: localhost
   roles:
     - role: amtega.vagrant_sandbox
