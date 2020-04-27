@@ -27,8 +27,6 @@ dependencies:
         centos: 7
         fedora: 29
         rhel: 7
-    tags:
-      - role::sshd
 
   - role: amtega.packages
     vars:
