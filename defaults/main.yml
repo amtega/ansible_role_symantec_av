@@ -10,6 +10,10 @@ symantec_av_state: present
 
 #symantec_av_version:
 
+# Directory from where setup artifact will be downloaded and launched
+
+symantec_av_temporary_dir: /tmp
+
 # Install Artifact
 #
 # Point `symantec_av_artifact` to a repository that contains the install
