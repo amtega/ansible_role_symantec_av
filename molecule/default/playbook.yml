@@ -1,0 +1,7 @@
+---
+
+- name: Converge
+  hosts: molecule_hosts
+  become: yes
+  roles:
+    - amtega.symantec_av

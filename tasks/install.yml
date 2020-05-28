@@ -15,6 +15,9 @@
       command: "{{ symantec_av_tmp_dir_result.path }}/install.sh -i "
       register: symantec_av_install_result
 
+    - include_tasks: compile.yml
+      when: symantec_av_compile_kernel_modules | bool
+
     - name: Remove temporary directory for SymantecAV artifact
       file:
         path: "{{ symantec_av_tmp_dir_result.path }}"

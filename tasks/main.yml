@@ -8,11 +8,11 @@
 
 - name: Install SymantecAV
   include_tasks: install.yml
-  when:
-    - symantec_av_state == "present"
-    - >-
-      not symantec_av_installed_version | string
-      is version(symantec_av_version | string, "==")
+  when: >-
+    (symantec_av_state == "present"
+     and not symantec_av_installed_version | string
+         is version(symantec_av_version | string, "=="))
+    or symantec_av_state == "force"
   tags:
     - role::symantec_av
     - role::symantec_av::install

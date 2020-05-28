@@ -28,16 +28,21 @@ dependencies:
         fedora: 29
         rhel: 7
 
+  - role: amtega.proxy_client
+    vars:
+      proxy_client_permanent: no
+
   - role: amtega.packages
     vars:
       packages_os:
         all:
           all:
-            unzip: present
-            glibc.i686: present
-            chkconfig: present
-            kernel-devel: present
-            kernel-headers: present
+            - name: unzip
+              state: present
+            - name: glibc.i686
+              state: present
+            - name: chkconfig
+              state: present
         fedora:
           all:
             libnsl.i686: present

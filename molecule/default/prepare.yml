@@ -1,0 +1,14 @@
+---
+
+- name: Prepare
+  hosts: molecule_hosts_centos
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Update system
+      command: yum update -y
+      args:
+        warn: no
+
+    - name: Reboot machine
+      reboot:

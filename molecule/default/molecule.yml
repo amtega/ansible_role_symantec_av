@@ -1,0 +1,48 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint:
+  name: yamllint
+platforms:
+  - name: centos7
+    box: centos/7
+    memory: 1024
+    groups:
+      - molecule_hosts
+      - molecule_hosts_centos
+  - name: fedora29
+    box: fedora/29-cloud-base
+    memory: 1024
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+  - name: fedora30
+    box: fedora/30-cloud-base
+    memory: 1024
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=${ANSIBLE_INVENTORY}
+    - --vault-password-file=${ANSIBLE_VAULT_PASSWORD_FILE:-/etc/hostname}
+  inventory:
+    group_vars:
+      molecule_hosts:
+        symantec_av_state: present
+        symantec_av_compile_kernel_modules: yes
+      molecule_hosts_fedora:
+        ansible_python_interpreter: /usr/bin/python3
+
+  lint:
+    name: ansible-lint
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
