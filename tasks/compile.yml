@@ -7,7 +7,7 @@
         # CentOS release the required kernel packages could not be found on the
         # mainstream repository and, therefore, we need to activate the Vault
         # repos
-        - name: Update operating system relase package
+        - name: Update operating system release package
           yum:
             name: centos-release
             state: latest
@@ -32,7 +32,7 @@
         symantec_av_enable_repos: >-
           {{ symantec_av_get_vault_repos_result.stdout_lines
              | default([])
-             | map("regex_replace", "^(.*)/.*", "\1")
+             | map("regex_replace", "!?(.*[0-9.]+.*)/.*", "\1")
              | list
              | join(",") }}
 
