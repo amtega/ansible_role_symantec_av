@@ -1,7 +1,7 @@
 ---
 # Role default lower priority variables
 
-# Symantec AV state. Can be preset or absent
+# Symantec AV state. Can be preset, absent or force (to force install)
 
 symantec_av_state: present
 
@@ -13,6 +13,15 @@ symantec_av_state: present
 # Directory from where setup artifact will be downloaded and launched
 
 symantec_av_temporary_dir: /tmp
+
+# Compile kernel modules (could be necessary if autoprotect returns a "Component
+# is Malfunctioning" state)
+
+symantec_av_compile_kernel_modules: no
+
+# Name of the package containing kernel modules
+
+symantec_av_compile_kernel_modules_package: ap-kernelmodule.tar.bz2
 
 # Install Artifact
 #

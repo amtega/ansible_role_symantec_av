@@ -1,0 +1,79 @@
+---
+# Compile kernel modules tasks
+
+- block:
+    - block:
+        # This stuff is necessary because if your system is not in the latest
+        # CentOS release the required kernel packages could not be found on the
+        # mainstream repository and, therefore, we need to activate the Vault
+        # repos
+        - name: Update operating system relase package
+          yum:
+            name: centos-release
+            state: latest
+
+        - name: Get list of vault repositories
+          shell: >-
+            yum repolist all
+            | grep "C[0-9]\.[0-9].*"
+            | awk '{ print $1 }'
+          args:
+            warn: no
+          register: symantec_av_get_vault_repos_result
+      when: ansible_facts.distribution | lower == "centos"
+
+    - block:
+        - name: Install packages required for compilation
+          yum:
+            name: "{{ symantec_av_kernel_packages }}"
+            enablerepo: "{{ symantec_av_enable_repos }}"
+            allow_downgrade: yes
+      vars:
+        symantec_av_enable_repos: >-
+          {{ symantec_av_get_vault_repos_result.stdout_lines
+             | default([])
+             | map("regex_replace", "^(.*)/.*", "\1")
+             | list
+             | join(",") }}
+
+    - name: Uncompress SymantecAV kernel module package
+      unarchive:
+        src: >-
+          {{ symantec_av_tmp_dir_result.path
+             + "/src/"
+             + symantec_av_compile_kernel_modules_package }}
+        dest: "{{ symantec_av_tmp_dir_result.path }}/src"
+        list_files: yes
+        remote_src: yes
+      register: symantec_av_kernel_module_unarchive_result
+
+    - block:
+        - name: Run SymantecAV kernel module compilation script
+          command: >-
+            ./build.sh
+            {{ symantec_av_kernel_module_compilation_args }}
+          args:
+            chdir: "{{ symantec_av_modules_unarchive_dir }}"
+          register: symantec_av_kernel_module_compilation_result
+          vars:
+            symantec_av_kernel_module_compilation_args: >-
+              {{ (ansible_facts.distribution | lower == "fedora")
+                 | ternary("--kernel-dir /usr/src/kernels/"
+                           + ansible_facts.kernel, "") }}
+
+        - name: Install SymantecAV kernel modules
+          shell: >-
+            mv {{ symantec_av_modules_unarchive_dir }}/bin.ira/*
+            /opt/Symantec/autoprotect
+          args:
+            warn: no
+      vars:
+        symantec_av_modules_unarchive_dir: >-
+          {{ symantec_av_tmp_dir_result.path
+             + "/src/"
+             + symantec_av_kernel_module_unarchive_result.files | first }}
+  environment: "{{ proxy_client_environment | default({}) }}"
+  tags:
+    - role::symantec_av
+    - role::symantec_av::install
+    - role::symantec_av::install::compile

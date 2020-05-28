@@ -3,3 +3,17 @@
 
 symantec_base_dir: /opt/Symantec
 symantec_av_bin: "{{ symantec_base_dir }}/symantec_antivirus"
+
+symantec_av_kernel_packages:
+  - bzip2
+  - gcc
+  - elfutils-libelf-devel
+  - >-
+    kernel-devel-{{ ansible_facts.kernel
+                    | regex_replace("^(.*)\.el.*", "\1") }}*
+  - >-
+    kernel-headers-{{ ansible_facts.kernel
+                      | regex_replace("^(.*)\.el.*", "\1") }}*
+  - make
+  - redhat-lsb-core
+  - tar

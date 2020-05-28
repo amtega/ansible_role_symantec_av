@@ -5,9 +5,9 @@
   service:
     name: "{{ symantec_av_service }}"
     state: >-
-      {{ (symantec_av_state == "present")
+      {{ (symantec_av_state in ["force", "present"])
          | ternary("started", "stopped") }}
-    enabled: "{{ symantec_av_state == 'present' }}"
+    enabled: "{{ symantec_av_state in ['force', 'present'] }}"
   ignore_errors: >-
     {{ (symantec_av_state == "absent") | ternary("yes", "no") }}
   loop:
