@@ -1,0 +1,8 @@
+---
+# Role temp directory tasks
+
+- name: Create temporary directory for SymantecAV artifact
+  tempfile:
+    path: "{{ symantec_av_temporary_dir }}"
+    state: directory
+  register: symantec_av_tmp_dir_result

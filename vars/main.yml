@@ -11,9 +11,7 @@ symantec_av_kernel_packages:
   - >-
     kernel-devel-{{ ansible_facts.kernel
                     | regex_replace("^(.*)\.el.*", "\1") }}*
-  - >-
-    kernel-headers-{{ ansible_facts.kernel
-                      | regex_replace("^(.*)\.el.*", "\1") }}*
+  - kernel-headers
   - make
   - redhat-lsb-core
   - tar

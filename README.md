@@ -31,23 +31,22 @@ This is an example playbook:
 
 ## Testing
 
-Tests are based on vagrant virtual machines. You can setup vagrant engine quickly using the playbook `files/setup.yml` available in the role [amtega.vagrant_engine](https://galaxy.ansible.com/amtega/vagrant_engine).
+Tests are based on [molecule with vagrant virtual machines](https://molecule.readthedocs.io/en/latest/installation.html).
 
-The Symantec antivirus artifact is not public available, so need to setup in the inventory the variables:
+The Symantec antivirus artifact is not public available, so to run the tests you have to pass the following variables:
 
-- `symantec_av_version`
-- `symantec_av_artifact`
-
-Once you have vagrant, you can run the tests with the following commands:
+- `ANSIBLE_INVENTORY`: path to an inventory providing the variables required by the role
+- `ANSIBLE_VAULT_PASSWORD_FILE`: path to the file containing the vault password required for the previous inventory (optional)
 
 ```shell
-$ cd amtega.symantec_av/tests
-$ ansible-playbook main.yml
+cd amtega.symantec_av
+
+ANSIBLE_INVENTORY=~/myinventory ANSIBLE_VAULT_PASSWORD_FILE=~/myvaultpassword molecule test
 ```
 
 ## License
 
-Copyright (C) 2019 AMTEGA - Xunta de Galicia
+Copyright (C) 2020 AMTEGA - Xunta de Galicia
 
 This role is free software: you can redistribute it and/or modify it under the terms of:
 
