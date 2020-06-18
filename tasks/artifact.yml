@@ -1,0 +1,16 @@
+---
+# Role download artifact tasks
+
+- name: Download SymantecAV artifact
+  include_role:
+    name: amtega.artifact
+  vars:
+    overrides:
+      id: symantec_av_artifact
+      dest: "{{ symantec_av_tmp_dir_result.path }}"
+      version: "{{ symantec_av_version }}"
+      unarchive: yes
+      unarchive_creates: install.sh
+      unarchive_remove: yes
+    artifact_list:
+      - "{{ symantec_av_artifact | combine(overrides) }}"

@@ -6,22 +6,42 @@ driver:
   name: vagrant
   provider:
     name: virtualbox
-lint:
-  name: yamllint
+lint: |
+  set -e
+  export ANSIBLE_ACTION_PLUGINS=$PWD/action_plugins
+  export ANSIBLE_BECOME_PLUGINS=$PWD/become_plugins
+  export ANSIBLE_CACHE_PLUGINS=$PWD/cache_plugins
+  export ANSIBLE_CALLBACK_PLUGINS=$PWD/callback_plugins
+  export ANSIBLE_CLICONF_PLUGINS=$PWD/cliconf_plugins
+  export ANSIBLE_CONNECTION_PLUGINS=$PWD/connection_plugins
+  export ANSIBLE_DOC_FRAGMENT_PLUGINS=$PWD/doc_fragment_plugins
+  export ANSIBLE_FILTER_PLUGINS=$PWD/filter_plugins
+  export ANSIBLE_HTTPAPI_PLUGINS=$PWD/httpapi_plugins
+  export ANSIBLE_INVENTORY_PLUGINS=$PWD/inventory_plugins
+  export ANSIBLE_LIBRARY=$PWD/library
+  export ANSIBLE_LOOKUP_PLUGINS=$PWD/lookup_plugins
+  export ANSIBLE_NETCONF_PLUGINS=$PWD/netconf_plugins
+  export ANSIBLE_STRATEGY_PLUGINS=$PWD/strategy_plugins
+  export ANSIBLE_TERMINAL_PLUGINS=$PWD/terminal_plugins
+  export ANSIBLE_TEST_PLUGINS=$PWD/test_plugins
+  export ANSIBLE_VARS_PLUGINS=$PWD/vars_plugins
+  yamllint .
+  ansible-lint
+  flake8
 platforms:
-  - name: centos7
+  - name: "centos7-${INSTANCE_UUID:-1}"
     box: centos/7
     memory: 1024
     groups:
       - molecule_hosts
       - molecule_hosts_centos
-  - name: fedora29
+  - name: "fedora29-${INSTANCE_UUID:-1}"
     box: fedora/29-cloud-base
     memory: 1024
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
-  - name: fedora30
+  - name: "fedora30-${INSTANCE_UUID:-1}"
     box: fedora/30-cloud-base
     memory: 1024
     groups:
@@ -33,16 +53,13 @@ provisioner:
     - --inventory=${ANSIBLE_INVENTORY}
     - --vault-password-file=${ANSIBLE_VAULT_PASSWORD_FILE:-/etc/hostname}
   inventory:
-    group_vars:
+    hosts:
       molecule_hosts:
-        symantec_av_state: present
-        symantec_av_compile_kernel_modules: yes
+        vars:
+          symantec_av_state: present
+          symantec_av_compile_kernel_modules: yes
       molecule_hosts_fedora:
-        ansible_python_interpreter: /usr/bin/python3
-
-  lint:
-    name: ansible-lint
+        vars:
+          ansible_python_interpreter: /usr/bin/python3
 verifier:
-  name: testinfra
-  lint:
-    name: flake8
+  name: ansible
