@@ -1,7 +1,7 @@
 ---
 # Role service tasks
 
-- name: Setup SymantecAV services
+- name: Setup SymantecAV services # noqa ignore-errors
   service:
     name: "{{ symantec_av_service }}"
     state: >-
