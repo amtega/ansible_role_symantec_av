@@ -5,6 +5,12 @@
   gather_facts: no
   become: yes
   tasks:
+    - name: Setup python
+      raw: "yum install -y {{ ansible_python_interpreter | basename }}"
+      when: yes
+      args:
+        warn: no
+
     - name: Update system
       command: yum update -y
       when: yes
@@ -13,3 +19,7 @@
 
     - name: Reboot machine
       reboot:
+  vars:
+    ansible_python_interpreter: >-
+      {{ (inventory_hostname in groups.molecule_hosts_centos_7)
+         | ternary("/usr/bin/python", "/usr/bin/python3") }}

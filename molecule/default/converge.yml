@@ -5,3 +5,7 @@
   become: yes
   roles:
     - amtega.symantec_av
+  vars:
+    ansible_python_interpreter: >-
+      {{ (inventory_hostname in groups.molecule_hosts_centos_7)
+         | ternary("/usr/bin/python", "/usr/bin/python3") }}
