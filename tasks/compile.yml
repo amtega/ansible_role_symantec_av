@@ -20,7 +20,7 @@
           args:
             warn: no
           register: symantec_av_get_vault_repos_result
-      when: ansible_facts.distribution | lower == "centos"
+      when: ansible_facts.distribution | lower != "fedora"
 
     - block:
         - name: Install packages required for compilation
